@@ -16,4 +16,11 @@ app.use(morgan('dev'));
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users',userRouter);
 
+app.all('*', (req, res, next )=>{
+    return res.status(404).json({
+        status: "error",
+        message: `can't find ${req.originalUrl} on this server`
+    })
+})
+
 module.exports = app;

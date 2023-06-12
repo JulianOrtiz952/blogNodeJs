@@ -3,11 +3,16 @@ const express = require('express');
 
 const router = express.Router();
 
+const userMiddleWare = require('../middlewares/users.middlewares')
+
 //create a route get
-router.get('/', userController.findAllUsers);
+router.get('/',userController.findAllUsers);
 
 //routes with id
 
-router.route('/:id').get(userController.findOneUser).delete(userController.deleteUser).patch(userController.updateUser)
+router.route('/:id')
+.get(userMiddleWare.validUser, userController.findOneUser)
+.delete(userMiddleWare.validUser, userController.deleteUser)
+.patch(userMiddleWare.validUser, userController.updateUser)
 
 module.exports = router
