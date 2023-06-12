@@ -1,9 +1,19 @@
-//exports without id
-exports.get = async(req, res) =>{
+const User = require('../models/users.model')
+
+//!exports without id
+exports.findAllUsers = async(req, res) =>{
     try {
+
+      const users = await User.findAll({
+        where:{
+          status: 'active',
+        },
+      })
+
         res.status(200).json({
             status: "succes",
-            message: "user has been getters 😎"
+            message: "this all the active users 😎",
+            users
         })
     } catch (error) {
         console.log(error);
@@ -14,29 +24,30 @@ exports.get = async(req, res) =>{
     }
 }
 
-//exports with id
+//!exports with id
 
 exports.findOneUser = async (req, res) => {
     try {
       const { id } = req.params;
   
-    //   const user = await User.findOne({
-    //     where: {
-    //       id,
-    //       status: 'available',
-    //     },
-    //   });
+      const user = await User.findOne({
+        where: {
+          id,
+          status: 'active',
+        },
+      });
   
-    //   if (!user) {
-    //     return res.status(404).json({
-    //       status: 'error',
-    //       message: 'User not found 😢',
-    //     });
-    //   }
+      if (!user) {
+        return res.status(404).json({
+          status: 'error',
+          message: 'User not found 😢',
+        });
+      }
   
       return res.status(200).json({
         status: 'success',
-        message: 'User retrieved successfully 😎' + id
+        message: 'User retrieved successfully 😎',
+        user
       });
     } catch (error) {
       console.log(error);
@@ -52,9 +63,28 @@ exports.deleteUser = async(req, res) =>{
 
         const { id } = req.params;
 
+        const user = await User.findOne({
+          where: {
+            id,
+            status: 'active'
+          }
+        })
+
+        if(!user){
+          return res.status('404').json({
+            status: 'error',
+            message: 'User with id: ${id} not found 😢'
+          })
+        }
+
+        await user.update({
+          status: 'disabled',
+          message: 'user has been disabled'
+        })
+
         res.status(200).json({
             status: "succes",
-            message: "user has been deleted 😎" + id
+            message: "user has been deleted 😎" 
         })
     } catch (error) {
         console.log(error);
@@ -63,4 +93,41 @@ exports.deleteUser = async(req, res) =>{
             message: "Something went very wrong 😢",
         })
     }
+}
+
+exports.updateUser = async(req, res) =>{
+  try {
+
+    const {id} = req.params;
+    const {name, description} = req.body;
+
+    const user = await User.findOne({
+      where:{
+        id,
+        status: 'active'
+      },
+    })
+
+    if (!user) {
+      return res.status(404).json({
+        status: 'error',
+        message: `User with id: ${id} not found 😢`,
+      });
+    }
+
+    user.update({name, description})
+
+      res.status(200).json({
+          status: "succes",
+          message: "user info has been updated 😎",
+          user
+      })
+
+  } catch (error) {
+      console.log(error);
+      res.status(500).json({
+          status: "fail",
+          message: "Something went very wrong 😢",
+      })
+  }
 }
