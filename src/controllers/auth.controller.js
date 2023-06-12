@@ -2,7 +2,7 @@ exports.signup = async(req, res) =>{
     try {
         res.status(200).json({
             status: "succes",
-            message: "user has successfully registered"
+            message: "user has successfully registered:😎"
         })
     } catch (error) {
         console.log(error);
@@ -17,7 +17,7 @@ exports.login = async(req, res) =>{
     try {
         res.status(200).json({
             status: "succes",
-            message: "user has successfully entered"
+            message: "user has successfully entered 😎"
         })
     } catch (error) {
         console.log(error);
